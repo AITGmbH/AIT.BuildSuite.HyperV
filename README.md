@@ -3,10 +3,10 @@ Remote control one or many virtual machine(s) on a (remote) Hyper-V Server.
 The Azure Pipelines task supports start and stop a virtual machine plus create, restore and delete Hyper-V snapshots. 
 
 # Getting Started
-Building the extension for publication in the Visual Studio Marketplace or uploading it to a local TFS/Azure DevOps Server can be done via the cross-platform Node CLI for Azure DevOps (TFX-CLI). Information on installing Node CLI for Azure DevOps and packaging and publishing Azure DevOps extensions can be found at [https://docs.microsoft.com/en-us/azure/devops/extend/publish/overview?view=vsts|Node CLI for Azure DevOps].
+Building the extension for publication in the Visual Studio Marketplace or uploading it to a local TFS/Azure DevOps Server can be done via the cross-platform Node CLI for Azure DevOps (TFX-CLI). Information on installing Node CLI for Azure DevOps and packaging and publishing Azure DevOps extensions can be found at [Node CLI for Azure DevOps](https://docs.microsoft.com/en-us/azure/devops/extend/publish/overview?view=vsts).
 
 The task uses internally Powershell (version 4 or newer recommended) as well as the Windows Powershell cmdlets for Hyper-V.
-The installation of the Hyper-V cmdlets is described in the readme of the extension. (more information can be found at [src/HyperVServer/Readme.md|Task Store Readme]).
+The installation of the Hyper-V cmdlets is described in the readme of the extension. (more information can be found at [Task Store Readme](src/HyperVServer/Readme.md)).
 
 Information about Microsoft Windows Hyper-V Powershell cmdlets can be found at [https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/quick-start/try-hyper-v-powershell|Hyper-V Commandlets].
 
@@ -22,7 +22,7 @@ The task is primarily tested manually because different Hyper-V hypervisor/host 
 
 [![Build Status](https://dev.azure.com/ait-public/GitHub/_apis/build/status/AITGmbH.AIT.BuildSuite.HyperV?branchName=master)](https://dev.azure.com/ait-public/GitHub/_build/latest?definitionId=1?branchName=master)
 
-Release Management status [https://dev.azure.com/ait-public/GitHub/_dashboards/dashboard/0d4c04ac-c819-4968-9d35-afef11317937|Build and Release Dashboard on Azure DevOps]
+Release Management status [Build and Release Dashboard on Azure DevOps](https://dev.azure.com/ait-public/GitHub/_dashboards/dashboard/0d4c04ac-c819-4968-9d35-afef11317937)
 
 # Contribute
 Contributions to the Hyper-V Azure Pipelines task are welcome. Some ways to contribute are to try things out, file issues and make pull-requests.
