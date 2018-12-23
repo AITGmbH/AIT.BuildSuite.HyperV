@@ -8,10 +8,10 @@ Building the extension for publication in the Visual Studio Marketplace or uploa
 The task uses internally Powershell (version 4 or newer recommended) as well as the Windows Powershell cmdlets for Hyper-V.
 The installation of the Hyper-V cmdlets is described in the readme of the extension. (more information can be found at [Task Store Readme](src/HyperVServer/Readme.md)).
 
-Information about Microsoft Windows Hyper-V Powershell cmdlets can be found at [https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/quick-start/try-hyper-v-powershell|Hyper-V Commandlets].
+Information about Microsoft Windows Hyper-V Powershell cmdlets can be found at [Hyper-V Commandlets](https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/quick-start/try-hyper-v-powershell).
 
 # Build and Test
-Information on installing Node CLI for Azure DevOps and packaging and publishing Azure DevOps extensions can be found at [https://docs.microsoft.com/en-us/azure/devops/extend/publish/overview?view=vsts|Node CLI for Azure DevOps].
+Information on installing Node CLI for Azure DevOps and packaging and publishing Azure DevOps extensions can be found at [Node CLI for Azure DevOps](https://docs.microsoft.com/en-us/azure/devops/extend/publish/overview?view=vsts).
 
 The Build folder in the GIT Repo also contains a Yaml definition for Azure Pipelines based CI-build (output is a VSIX file).
 The subsequent Azure Pipelines release process changes the extension name and ID once again so that an independent internal test version (preview) can be generated. The version number remains unchanged in the following phases.
