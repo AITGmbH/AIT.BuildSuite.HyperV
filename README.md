@@ -18,7 +18,11 @@ The subsequent Azure Pipelines release process changes the extension name and ID
 
 The task is primarily tested manually because different Hyper-V hypervisor/host os versions and the appropriate Hyper-V cmdlets are required. Especially in older versions Hyper-V commandlets are not always backward-compatible (Pre - Windows 10).
 
+# Build and Release Status
+
 [![Build Status](https://dev.azure.com/ait-public/GitHub/_apis/build/status/AITGmbH.AIT.BuildSuite.HyperV?branchName=master)](https://dev.azure.com/ait-public/GitHub/_build/latest?definitionId=1?branchName=master)
+
+Release Management status [https://dev.azure.com/ait-public/GitHub/_dashboards/dashboard/0d4c04ac-c819-4968-9d35-afef11317937|Build and Release Dashboard on Azure DevOps]
 
 # Contribute
 Contributions to the Hyper-V Azure Pipelines task are welcome. Some ways to contribute are to try things out, file issues and make pull-requests.
