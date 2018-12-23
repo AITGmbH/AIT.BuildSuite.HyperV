@@ -1,0 +1,67 @@
+name: $(majorversion).$(minorversion).$(Rev:r)
+
+resources:
+- repo: self
+  clean: true
+
+trigger:
+- master
+
+variables:
+    majorversion: 6
+    minorversion: 1
+    PublisherID: 'AITGmbh'
+
+jobs:
+- job: BuildExtensionVariant
+  displayName: "Build Azure DevOps extension variant"
+  strategy: 
+    maxParallel: 4
+    matrix: 
+      Preview_AzureDevOps:
+        ExtensionName: 'Hyper-V (Preview)'
+        ExtensionID: 'aithyperv-preview'
+        ExtensionCategory: 'Azure Pipelines'
+        VsixFileSuffix: 'azurepipelines_preview'
+      Public_AzureDevOps:
+        ExtensionName: 'Hyper-V'
+        ExtensionID: 'aithyperv'
+        ExtensionCategory: 'Azure Pipelines'
+        VsixFileSuffix: 'azurepipelines'
+      Preview_LegacyTFS:
+        ExtensionName: 'Hyper-V (Legacy-Preview)'
+        ExtensionID: 'aithyperv-legacy-preview'
+        ExtensionCategory: 'Build and release'
+        VsixFileSuffix: '_build_and_release_preview'
+      Public_LegacyTFS:
+        ExtensionName: 'Hyper-V (Legacy)'
+        ExtensionID: 'aithyperv-legacy'
+        ExtensionCategory: 'Build and release'
+        VsixFileSuffix: '_build_and_release'
+    
+  steps:
+    - task: colinsalmcorner.colinsalmcorner-buildtasks.replace-tokens-task.ReplaceTokens@1
+      displayName: 'Set Releasetype of HyperVServer task'
+      inputs:
+          sourcePath: src/HyperVServer
+          filePattern: 'vss-extension.json'
+
+    - task: ms-devlabs.vsts-developer-tools-build-tasks.package-extension-build-task.PackageVSTSExtension@1
+      displayName: 'Package Extension: AIT BuildSuite HyperV for Azure DevOps / Visual Studio Marketplace based deployment'
+      inputs:
+        rootFolder: src/HyperVServer
+        outputPath: '$(build.artifactstagingdirectory)\AIT.BuildSuite.HyperV_$(VsixFileSuffix).vsix'
+        publisherId: '$(PublisherID)'
+        extensionVersion: '$(Build.BuildNumber)'
+        extensionId: '$(ExtensionID)'
+        extensionName: '$(ExtensionName)'
+        updateTasksVersion: true
+        extensionVisibility: private
+        extensionPricing: free
+        bypassLocalValidation: true
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: Extension'
+      inputs:
+          ArtifactName: Extension
+        
