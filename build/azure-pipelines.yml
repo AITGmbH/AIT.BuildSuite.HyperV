@@ -46,6 +46,14 @@ jobs:
           sourcePath: src/HyperVServer
           filePattern: 'vss-extension.json'
 
+    - task: ToreGroneng.ToreGroneng-PSScriptAnalyzer-Task.PSScriptAnalyzer-Task.PowerShell Script Analyzer@1
+      displayName: 'Execute PsScriptAnalyzer '
+      inputs:
+          PsFolder: src/HyperVServer/HyperVServer
+          ExcludeRules: 'PSAvoidUsingWriteHost,Measure-WriteHost,Measure-LongClassName,Measure-CurlyBracket'
+          CustomRulePath: build/CommunityAnalyzerRules
+          Severity: 'Error,Warning'
+
     - task: ms-devlabs.vsts-developer-tools-build-tasks.package-extension-build-task.PackageVSTSExtension@1
       displayName: 'Package Extension: AIT BuildSuite HyperV for Azure DevOps / Visual Studio Marketplace based deployment'
       inputs:
