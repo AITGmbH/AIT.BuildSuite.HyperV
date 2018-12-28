@@ -558,7 +558,7 @@ function Stop-HyperVVM
 			{
 				$vmname = $vmnames[$i];
 
-				Stop-VMUnfriendly -vmname $vmname -hostname $hostname -Confirm:$true
+				Stop-VMUnfriendly -vmname $vmname -hostname $hostname -Confirm:$false
 				$vm = Get-VM -Name $vmname -Computername $hostname
 			
 				if ($vm.State -ne "Off")
@@ -909,7 +909,7 @@ function Get-StatusOfRemoveHyperVSnapshot
 
 Get-HyperVCmdletsAvailable
 Get-ParameterOverview
-Set-HyperVCmdletCacheDisabled -Confirm:$true
+Set-HyperVCmdletCacheDisabled -Confirm:$false
 
 #region Control hyper-v
 Try
@@ -921,23 +921,23 @@ Try
 	switch ($Action)
 	{
 		"Start VM" {
-			Start-HyperVVM -vmnames $vmNames -hostname $hostName -Confirm:$true
+			Start-HyperVVM -vmnames $vmNames -hostname $hostName -Confirm:$false
 			Get-StatusOfStartHyperVVM -vmnames $vmNames -hostname $hostName
 		}
 		"Stop VM" {
-			Stop-HyperVVM -vmnames $vmNames -hostname $hostName -Confirm:$true
+			Stop-HyperVVM -vmnames $vmNames -hostname $hostName -Confirm:$false
 			Get-StatusOfStopVM -vmnames $vmNames -hostname $hostName
 		}
 		"Create Snapshot" {
-			New-HyperVSnapshot -vmnames $vmNames -hostname $hostName -Confirm:$true
+			New-HyperVSnapshot -vmnames $vmNames -hostname $hostName -Confirm:$false
 			Get-StatusOfNewHyperVSnapshot -vmnames $vmNames -hostname $hostName
 		}
 		"Restore Snapshot" {
-			Restore-HyperVSnapshot -vmnames $vmNames -hostname $hostName -Confirm:$true
+			Restore-HyperVSnapshot -vmnames $vmNames -hostname $hostName -Confirm:$false
 			Get-StatusOfRestoreHyperVSnapshot -vmnames $vmNames -hostname $hostName
 		}
 		"Remove Snapshot" {
-			Remove-HyperVSnapshot -vmnames $vmNames -hostname $hostName -Confirm:$true
+			Remove-HyperVSnapshot -vmnames $vmNames -hostname $hostName -Confirm:$false
 			Get-StatusOfRemoveHyperVSnapshot -vmnames $vmNames -hostname $hostName
 		}
 	}
@@ -953,7 +953,7 @@ Catch
 	Write-Error $_.Exception.Message;
 }
 
-Set-HyperVCmdletCacheEnabled -Confirm:$true
+Set-HyperVCmdletCacheEnabled -Confirm:$false
 
 exit 0
 
