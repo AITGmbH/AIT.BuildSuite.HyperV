@@ -8,8 +8,8 @@ trigger:
 - master
 
 variables:
-    majorversion: 6
-    minorversion: 1
+    majorversion: 7
+    minorversion: 0
     PublisherID: 'AITGmbh'
 
 jobs:
