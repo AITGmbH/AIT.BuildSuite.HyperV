@@ -11,7 +11,7 @@
     "Minor": 0,
     "Patch": 0
   },
-  "minimumAgentVersion": "1.83.0",
+  "minimumAgentVersion": "1.95.1",
   "demands": [ ],
   "instanceNameFormat": "Hyper-V Server: $(Action) $(VMName) on $(Computername)",
   "inputs": [
@@ -57,7 +57,7 @@
     }
   ],
   "execution": {
-    "PowerShell": {
+    "PowerShell3": {
       "target": "$(currentDirectory)\\HyperVServer.ps1",
       "argumentFormat": "",
       "workingDirectory": "$(currentDirectory)"

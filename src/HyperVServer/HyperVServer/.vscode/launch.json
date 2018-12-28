@@ -1,0 +1,126 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+    {
+        "type": "PowerShell",
+        "request": "launch",
+        "name": "Create Snapshot - MultiVM",
+        "script": "${file}",
+        "args": [
+            "-action",
+            "'Create snapshot'",
+            "-VMName",
+            "'Win7SP1,ALMVM'",
+            "-Computername",
+            "nbk080",
+            "-SnapshotName",
+            "Debug"
+        ],
+        "cwd": "${file}"
+    },
+    {
+        "type": "PowerShell",
+        "request": "launch",
+        "name": "Restore Snapshot - MultiVM",
+        "script": "${file}",
+        "args": [
+            "-action",
+            "'Restore snapshot'",
+            "-VMName",
+            "'Win7SP1,ALMVM'",
+            "-Computername",
+            "nbk080",
+            "-SnapshotName",
+            "Debug"
+        ],
+        "cwd": "${file}"
+    },
+    {
+        "type": "PowerShell",
+        "request": "launch",
+        "name": "Remove Snapshot - MultiVM",
+        "script": "${file}",
+        "args": [
+            "-action",
+            "'Remove snapshot'",
+            "-VMName",
+            "'Win7SP1,ALMVM'",
+            "-Computername",
+            "nbk080",
+            "-SnapshotName",
+            "Debug"
+        ],
+        "cwd": "${file}"
+    },
+    {
+        "type": "PowerShell",
+        "request": "launch",
+        "name": "Stop VM - MultiVM",
+        "script": "${file}",
+        "args": [
+            "-action",
+            "'Stop'",
+            "-VMName",
+            "'Win7SP1,ALMVM'",
+            "-Computername",
+            "nbk080"
+        ],
+        "cwd": "${file}"
+    },
+    {
+        "type": "PowerShell",
+        "request": "launch",
+        "name": "Start VM - MultiVM",
+        "script": "${file}",
+        "args": [
+            "-action",
+            "'Start'",
+            "-VMName",
+            "'Win7SP1,ALMVM'",
+            "-Computername",
+            "nbk080"
+        ],
+        "cwd": "${file}"
+    },
+        {
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "PowerShell Launch Current File",
+            "script": "${file}",
+            "args": [],
+            "cwd": "${file}"
+        },
+        {
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "PowerShell Launch Current File in Temporary Console",
+            "script": "${file}",
+            "args": [],
+            "cwd": "${file}",
+            "createTemporaryIntegratedConsole": true
+        },
+        {
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "PowerShell Launch Current File w/Args Prompt",
+            "script": "${file}",
+            "args": [
+                "${command:SpecifyScriptArgs}"
+            ],
+            "cwd": "${file}"
+        },
+        {
+            "type": "PowerShell",
+            "request": "attach",
+            "name": "PowerShell Attach to Host Process",
+            "processId": "${command:PickPSHostProcess}",
+            "runspaceId": 1
+        },
+        {
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "PowerShell Interactive Session",
+            "cwd": "${workspaceRoot}"
+        }
+    ]
+}

@@ -22,6 +22,7 @@ and [Hyper-V Module](https://technet.microsoft.com/itpro/powershell/windows/hype
 * Changes since 6.0.0: Added support for multiple VMs names in one build step, added support for deleting snapshots, code refactoring and cleanup
 * Changes since 6.0.8: Added information about data protection
 * Changes since 6.1.0: Adapted Azure DevOps rebranding in certain files/places, opensourced version on GitHub
+* Changes since 7.0.0: Moved vom Powershell to Powershell3 execution handler, refactored code based on PSScriptAnalyzer
 
 ### Known limitions
 -------
