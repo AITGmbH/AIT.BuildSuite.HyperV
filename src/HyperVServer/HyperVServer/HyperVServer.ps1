@@ -61,8 +61,11 @@ function Get-HyperVCmdletsAvailable
 # At the end of our actions we re-enable the cache again 
 function Set-HyperVCmdletCacheDisabled
 {
+	<# 
+	.Notes 
+	Disable hyper-v commandlet cache because this causes some trouble in cases of high workloads / number of hyper-v changes/actions
+	#>
 	[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]
-
 	Param(
         [Parameter()]
         [switch]
@@ -106,8 +109,11 @@ function Set-HyperVCmdletCacheDisabled
 
 function Set-HyperVCmdletCacheEnabled
 {
+	<# 
+	.Notes 
+	(re-)enable hyper-v commandlet cache again so that other scripts are not affected.
+	#>
 	[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]
-
     Param(
         [Parameter()]
         [switch]
@@ -163,7 +169,6 @@ function Get-ParameterOverview
 function Get-VMExists
 {
 	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "", Scope="Function", Target="*")]
-
 	param([System.Collections.ArrayList]$vmnames, [string]$hostname)
 	
 	write-host "Checking if all configured VMs are found on host $hostname";
@@ -193,7 +198,9 @@ function Get-VMExists
 
 function Get-VMNamesFromVMNameParameter
 {
-	# this function works supports one or more VMnames in VMName build process parameter 
+	<# 
+	.Notes this function works supports one or more VMnames in VMName build process parameter 
+	#>
 
 	$vmNames = New-Object System.Collections.ArrayList;
 
@@ -224,8 +231,14 @@ function Get-VMNamesFromVMNameParameter
 #region task core actions
 function Start-HyperVVM
 {
+	<#
+	.Notes 
+	Starts one or more VMs and waits for healthy signal from VM extensions.
+	
+	ToDo 
+	It is possible that not all OS or Extensions support health signals. Maybe add an alternative approach.
+	#>
 	[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]
-
     Param(
         [Parameter()]
 		$vmnames,
@@ -385,8 +398,11 @@ function Get-StatusOfStartHyperVVM
 
 function Stop-VMUnfriendly
 {  
+	<#
+	.Notes 
+	alternative approach to shutdown VMs in case regular shutdown is not possible.
+	#>
 	[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]
-
   	param(
 		[Parameter()]
 		$vmname, 
@@ -456,8 +472,11 @@ function Stop-VMUnfriendly
 
 function Stop-VMByTurningOffVM
 {			
+	<#
+	.Notes 
+	helper method for stop vm. this one turns the vm off (instead of regular shutdown) -> dataloss is possible in some cases -> e.g. cache not flushed to disk
+	#>
 	[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]
-
     Param(
         [Parameter()]
         [switch]
@@ -519,8 +538,11 @@ function Stop-VMByTurningOffVM
 
 function Stop-HyperVVM
 {
+	<#
+	.Notes 
+	Stops one or more VMs. In conjunction with get-statusstopofvm the function starts with a friendly shutdown approach and after 5 min. does a hard or unfriendly shutdown.
+	#>
 	[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]
-
     Param(
 		[Parameter()]
 		$vmnames, 
@@ -636,8 +658,11 @@ function Get-StatusOfStopVM
 
 function New-HyperVSnapshot
 {
+	<#
+	.Notes 
+	Creates a new snapshot for one or more VMs. The snapshot name should be the same on all VMs because they are considered as a unit.
+	#>
 	[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]
-
     Param(
 		[Parameter()]
 		$vmnames, 
@@ -741,8 +766,12 @@ function Get-StatusOfNewHyperVSnapshot
 
 function Restore-HyperVSnapshot
 {
+	<#
+	.Notes
+	Restores the environment (all VMs) back to specified snapshot/checkpoint
+	In case of an production snapshot you need to add start-vm in your build -> we try to keep the functions as simple as possible
+	#>
 	[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]
-
     Param(
 		[Parameter()]
 		$vmnames,
@@ -844,8 +873,12 @@ function Get-StatusOfRestoreHyperVSnapshot
 
 function Remove-HyperVSnapshot
 {
+	<#
+	.Notes
+	Remove snapshot on one or more VMs
+	Function checks if snapshot exists -> makes it a little bit more robust
+	#>
 	[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]
-
     Param(
 		[Parameter()]
 		$vmnames, 
