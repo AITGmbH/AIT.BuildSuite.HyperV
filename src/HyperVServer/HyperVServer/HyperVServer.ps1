@@ -741,23 +741,64 @@ function Get-StatusOfNewHyperVSnapshot
 
 function Restore-HyperVSnapshot
 {
-	param($vmnames, $hostname)
+	[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]
 
-	for ($i=0;$i -lt $vmnames.Count; $i++)
-	{
-		$vmname = $vmnames[$i];
-		$snapshot = Get-VMsnapshot -VMname $vmname -ComputerName $hostname | Where-Object {$_.Name -eq "$SnapshotName"}
-		
-		if ($null -eq $snapshot)
-		{
-			write-error "Snapshot $SnapshotName of VM $vmname on host $hostname doesnt exist."
-			throw "Snapshot $SnapshotName of VM $vmname on host $hostname doesnt exist."
-		}
+    Param(
+		[Parameter()]
+		$vmnames,
+		[Parameter()]
+		$hostname,
+        [Parameter()]
+        [switch]
+        $Force
+    )
 
-		write-host "Restoring snapshot $SnapshotName for VM $vmname on host $hostname have been started."
-		Restore-VMSnapshot -VMName $vmname -ComputerName $hostname -Name $SnapshotName -Confirm:$false -ErrorAction Stop
-	}
+	Begin {
+        if (-not $PSBoundParameters.ContainsKey('Verbose')) {
+            $VerbosePreference = $PSCmdlet.SessionState.PSVariable.GetValue('VerbosePreference')
+        }
+        if (-not $PSBoundParameters.ContainsKey('Confirm')) {
+            $ConfirmPreference = $PSCmdlet.SessionState.PSVariable.GetValue('ConfirmPreference')
+        }
+        if (-not $PSBoundParameters.ContainsKey('WhatIf')) {
+            $WhatIfPreference = $PSCmdlet.SessionState.PSVariable.GetValue('WhatIfPreference')
+        }
+        Write-Verbose ('[{0}] Confirm={1} ConfirmPreference={2} WhatIf={3} WhatIfPreference={4}' -f $MyInvocation.MyCommand, $Confirm, $ConfirmPreference, $WhatIf, $WhatIfPreference)
+    }
+
+    Process {
+        <# Pre-impact code #>
+    
+        # -Confirm --> $ConfirmPreference = 'Low'
+        # ShouldProcess intercepts WhatIf* --> no need to pass it on
+        if ($Force -or $PSCmdlet.ShouldProcess("ShouldProcess?")) {
+            Write-Verbose ('[{0}] Reached command' -f $MyInvocation.MyCommand)
+            # Variable scope ensures that parent session remains unchanged
+			$ConfirmPreference = 'None'
+			
+			for ($i=0;$i -lt $vmnames.Count; $i++)
+			{
+				$vmname = $vmnames[$i];
+				$snapshot = Get-VMsnapshot -VMname $vmname -ComputerName $hostname | Where-Object {$_.Name -eq "$SnapshotName"}
+				
+				if ($null -eq $snapshot)
+				{
+					write-error "Snapshot $SnapshotName of VM $vmname on host $hostname doesnt exist."
+					throw "Snapshot $SnapshotName of VM $vmname on host $hostname doesnt exist."
+				}
+
+				write-host "Restoring snapshot $SnapshotName for VM $vmname on host $hostname have been started."
+				Restore-VMSnapshot -VMName $vmname -ComputerName $hostname -Name $SnapshotName -Confirm:$false -ErrorAction Stop
+			}
+		}  
+        <# Post-impact code #>
+    }
+
+    End {
+        Write-Verbose ('[{0}] Confirm={1} ConfirmPreference={2} WhatIf={3} WhatIfPreference={4}' -f $MyInvocation.MyCommand, $Confirm, $ConfirmPreference, $WhatIf, $WhatIfPreference)
+    }
 }
+
 function Get-StatusOfRestoreHyperVSnapshot
 {
 	param($vmnames, $hostname)
@@ -904,7 +945,6 @@ function Get-StatusOfRemoveHyperVSnapshot
 
 	write-host "Removing snapshot has been finished for all VM(s)."
 }
-
 #endregion
 
 Get-HyperVCmdletsAvailable
@@ -956,5 +996,4 @@ Catch
 Set-HyperVCmdletCacheEnabled -Confirm:$false
 
 exit 0
-
 #endregion
