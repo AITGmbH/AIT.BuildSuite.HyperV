@@ -20,9 +20,11 @@ The task is primarily tested manually because different Hyper-V hypervisor/host 
 
 # Build and Release Status
 
-[![Build Status](https://dev.azure.com/ait-public/GitHub/_apis/build/status/AITGmbH.AIT.BuildSuite.HyperV?branchName=master)](https://dev.azure.com/ait-public/GitHub/_build/latest?definitionId=1?branchName=master)
+Build [![Build Status](https://dev.azure.com/ait-public/GitHub/_apis/build/status/AITGmbH.AIT.BuildSuite.HyperV?branchName=master)](https://dev.azure.com/ait-public/GitHub/_build/latest?definitionId=1?branchName=master)
 
-Release Management status [Build and Release Dashboard on Azure DevOps](https://dev.azure.com/ait-public/GitHub/_dashboards/dashboard/0d4c04ac-c819-4968-9d35-afef11317937)
+Release Management - Preview [![RM Status - Preview Stage](https://vsrm.dev.azure.com/ait-public/_apis/public/Release/badge/3dcbbf76-dfb1-4f85-8bde-1d140be6ee91/1/1)](https://vsrm.dev.azure.com/ait-public/_apis/public/Release/badge/3dcbbf76-dfb1-4f85-8bde-1d140be6ee91/1/1)
+
+Release Management - Public [![RM Status - Preview Stage](https://vsrm.dev.azure.com/ait-public/_apis/public/Release/badge/3dcbbf76-dfb1-4f85-8bde-1d140be6ee91/1/2)](https://vsrm.dev.azure.com/ait-public/_apis/public/Release/badge/3dcbbf76-dfb1-4f85-8bde-1d140be6ee91/1/2)
 
 # Contribute
 Contributions to the Hyper-V Azure Pipelines task are welcome. Some ways to contribute are to try things out, file issues and make pull-requests.
