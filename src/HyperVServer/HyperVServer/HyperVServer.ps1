@@ -98,7 +98,7 @@ function Set-HyperVCmdletCacheDisabled
             $ConfirmPreference = 'None'
 
 			write-host "Disable Hyper-V cmdlet caching."
-			Disable-VMEventing -force
+			Disable-VMEventing -ComputerName $Computername -force
 		}
 	}
 
@@ -144,7 +144,7 @@ function Set-HyperVCmdletCacheEnabled
             $ConfirmPreference = 'None'
 
 			write-host "(Re-)Enable Hyper-V cmdlet caching."
-			Enable-VMEventing -force
+			Enable-VMEventing -ComputerName $Computername -force
 		}
 
 	}
