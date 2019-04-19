@@ -46,6 +46,21 @@ jobs:
           sourcePath: src/HyperVServer
           filePattern: 'vss-extension.json'
 
+    - powershell: |
+        mkdir $(Build.SourcesDirectory)\src\HyperVServer\HyperVServer\ps_modules
+        Save-Module -Name VstsTaskSdk -Path $(Build.SourcesDirectory)\src\HyperVServer\HyperVServer\ps_modules
+        $sdk = Get-ChildItem -Path $(Build.SourcesDirectory)\src\HyperVServer\HyperVServer\ps_modules -Recurse -Filter VstsTaskSdk.psm1
+        
+        $from =$sdk.Directory.FullName
+        $to = $sdk.Directory.Parent.FullName
+        
+        Get-ChildItem -Path $from | % { 
+          Copy-Item $_.fullname "$to" -Recurse -Force
+        }
+
+        Remove-Item -Path $from -Recurse -Force
+      displayName: 'Add VstsTaskSdk PowerShell SDK'
+
     - task: ToreGroneng.ToreGroneng-PSScriptAnalyzer-Task.PSScriptAnalyzer-Task.PowerShell Script Analyzer@1
       displayName: 'Execute PsScriptAnalyzer '
       inputs:
