@@ -65,7 +65,7 @@ jobs:
       displayName: 'Execute PsScriptAnalyzer '
       inputs:
           PsFolder: src/HyperVServer/HyperVServer
-          ExcludeRules: 'PSAvoidUsingWriteHost,Measure-WriteHost,Measure-LongClassName,Measure-CurlyBracket,Measure-RequiresRunAsAdministrator'
+          ExcludeRules: 'PSAvoidUsingWriteHost,Measure-WriteHost,Measure-LongClassName,Measure-CurlyBracket,Measure-RequiresRunAsAdministrator,Measure-RequiresModules'
           CustomRulePath: build/CommunityAnalyzerRules
           Severity: 'Error,Warning'
 

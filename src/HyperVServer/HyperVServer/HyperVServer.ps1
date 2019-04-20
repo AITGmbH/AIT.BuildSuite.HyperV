@@ -33,14 +33,14 @@ function Get-HyperVCmdletsAvailable
 				}
 		}
 
-	Write-Host "Microsoft-Hyper-V-Management-PowerShell are installed."	
+	Write-Host "Microsoft-Hyper-V-Management-PowerShell are installed."
 
 }
 
 # Too many Hyper-V powershell actions in a short period can lead to wrong data in PS-HyperV-cache
 # We disable the cache before doing any actions to avoid invalid data
-# Disable the cache leads to increased workfload 
-# At the end of our actions we re-enable the cache again 
+# Disable the cache leads to increased workfload
+# At the end of our actions we re-enable the cache again
 function Set-HyperVCmdletCacheDisabled
 {
 	<# 
