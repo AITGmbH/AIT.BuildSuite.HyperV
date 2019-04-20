@@ -65,8 +65,7 @@ jobs:
       displayName: 'Execute PsScriptAnalyzer '
       inputs:
           PsFolder: src/HyperVServer/HyperVServer
-          ExcludeRules: 'PSAvoidUsingWriteHost,Measure-WriteHost,Measure-LongClassName,Measure-CurlyBracket'
-          CustomRulePath: build/CommunityAnalyzerRules
+          ExcludeRules: 'PSAvoidUsingWriteHost'
           Severity: 'Error,Warning'
 
     - task: ms-devlabs.vsts-developer-tools-build-tasks.package-extension-build-task.PackageVSTSExtension@1
