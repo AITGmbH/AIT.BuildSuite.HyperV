@@ -1009,7 +1009,7 @@ Catch
 
 	Write-Warning ('You have may not enough permission to use the hyper-v cmdlets, please check this:
 	Add the ' + $currentUser.Name + ' user to the Hyper-V Administrator group on the host on which the agent run.
-	This current user can add to the group with this command: ([adsi]""WinNT://./Hyper-V Administrators,group"").Add(""WinNT://$($env:UserDomain)/$($env:Username,user""))')
+	This current user can add to the group with this command: net localgroup "Hyper-V Administrators" ' + $currentUser.Name + ' /add')
 
 	Write-Error $_.Exception.Message;
 }
