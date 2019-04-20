@@ -43,8 +43,8 @@ function Get-HyperVCmdletsAvailable
 # At the end of our actions we re-enable the cache again
 function Set-HyperVCmdletCacheDisabled
 {
-	<# 
-	.Notes 
+	<#
+	.Notes
 	Disable hyper-v commandlet cache because this causes some trouble in cases of high workloads / number of hyper-v changes/actions
 	#>
 	[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]
@@ -67,11 +67,10 @@ function Set-HyperVCmdletCacheDisabled
         Write-Verbose ('[{0}] Confirm={1} ConfirmPreference={2} WhatIf={3} WhatIfPreference={4}' -f $MyInvocation.MyCommand, $Confirm, $ConfirmPreference, $WhatIf, $WhatIfPreference)
     }
 
-	
 	process
 	{
 		<# Pre-impact code #>
-    
+
         # -Confirm --> $ConfirmPreference = 'Low'
         # ShouldProcess intercepts WhatIf* --> no need to pass it on
         if ($Force -or $PSCmdlet.ShouldProcess("ShouldProcess?")) {
@@ -91,8 +90,8 @@ function Set-HyperVCmdletCacheDisabled
 
 function Set-HyperVCmdletCacheEnabled
 {
-	<# 
-	.Notes 
+	<#
+	.Notes
 	(re-)enable hyper-v commandlet cache again so that other scripts are not affected.
 	#>
 	[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]
@@ -117,7 +116,7 @@ function Set-HyperVCmdletCacheEnabled
 
     Process {
         <# Pre-impact code #>
-    
+
         # -Confirm --> $ConfirmPreference = 'Low'
         # ShouldProcess intercepts WhatIf* --> no need to pass it on
         if ($Force -or $PSCmdlet.ShouldProcess("ShouldProcess?")) {
@@ -137,7 +136,7 @@ function Set-HyperVCmdletCacheEnabled
 }
 
 function Get-ParameterOverview
-{	
+{
 	write-host "Action is $Action.";
 	write-host "Assigned VM name(s) are $VMName.";
 	write-host "Assigned Hyper-V server host is $Computername.";
@@ -152,7 +151,7 @@ function Get-VMExists
 {
 	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "", Scope="Function", Target="*")]
 	param([System.Collections.ArrayList]$vmnames, [string]$hostname)
-	
+
 	write-host "Checking if all configured VMs are found on host $hostname";
 
 	$nonExistingVMs;
@@ -180,8 +179,8 @@ function Get-VMExists
 
 function Get-VMNamesFromVMNameParameter
 {
-	<# 
-	.Notes this function works supports one or more VMnames in VMName build process parameter 
+	<#
+	.Notes this function works supports one or more VMnames in VMName build process parameter
 	#>
 
 	$vmNames = New-Object System.Collections.ArrayList;
@@ -199,14 +198,14 @@ function Get-VMNamesFromVMNameParameter
 		$vmNames = $tempNames;
 	}
 	else {
-		# https://stackoverflow.com/questions/28034605/arraylist-prints-numbers 
+		# https://stackoverflow.com/questions/28034605/arraylist-prints-numbers
 		$VMName = $VMName.Trim();
 		$vmNames.Add($VMName) | Out-Null;
 	}
 
 	Write-Debug "Found $($vmNames.Count) VM names in VMName parameter";
 
-	# , is a workaround for powershell issues with arraylist -> otherwise this object is converted to string 
+	# , is a workaround for powershell issues with arraylist -> otherwise this object is converted to string
 	return ,$vmNames;
 }
 
@@ -214,10 +213,10 @@ function Get-VMNamesFromVMNameParameter
 function Start-HyperVVM
 {
 	<#
-	.Notes 
+	.Notes
 	Starts one or more VMs and waits for healthy signal from VM extensions.
-	
-	ToDo 
+
+	ToDo
 	It is possible that not all OS or Extensions support health signals. Maybe add an alternative approach.
 	#>
 	[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]
@@ -242,11 +241,11 @@ function Start-HyperVVM
             $WhatIfPreference = $PSCmdlet.SessionState.PSVariable.GetValue('WhatIfPreference')
         }
         Write-Verbose ('[{0}] Confirm={1} ConfirmPreference={2} WhatIf={3} WhatIfPreference={4}' -f $MyInvocation.MyCommand, $Confirm, $ConfirmPreference, $WhatIf, $WhatIfPreference)
-    }			
+    }
 
 	Process {
         <# Pre-impact code #>
-    
+
         # -Confirm --> $ConfirmPreference = 'Low'
         # ShouldProcess intercepts WhatIf* --> no need to pass it on
         if ($Force -or $PSCmdlet.ShouldProcess("ShouldProcess?")) {
@@ -257,7 +256,7 @@ function Start-HyperVVM
 			for ($i=0; $i -lt $vmnames.Count; $i++ )
 			{
 				$vmname = $vmnames[$i];
-				
+
 				$vm = Get-VM -Name $vmname -Computername $hostname
 				if ($vm.Heartbeat -ne "OkApplicationsHealthy")
 				{
@@ -290,20 +289,20 @@ function Get-StatusOfStartHyperVVM
 	while ($workInProgress)
 	{
 		for ($i=0; $i -lt $vmnames.Count; $i++)
-		{	
+		{
 			$vmname = $vmnames[$i];
 			if (!$vmnames.Contains($vmname))
 			{
 				continue
 			}
-		
+
 			$vm = Get-VM -Name $vmname -Computername $hostname
 
 			if ($vm.Status -match "Starting")
 			{
 				Write-Host "VM $vmname on host $hostname is still in status Starting"
 			}
-			else 
+			else
 			{
 				$finishedVMs.Add($vmname) | Out-Null
 				write-host "VM $vmname is now ready."
@@ -322,12 +321,12 @@ function Get-StatusOfStartHyperVVM
 			}
 		}
 	}
-	
+
 	$workInProgress = $true;
 	while ($workInProgress)
 	{
 		for ($i=0; $i -lt $vmnames.Count; $i++)
-		{	
+		{
 			$circuitBreaker = $false;
 			$vm = Get-VM -Name $vmname -Computername $hostname
 			write-host "Waiting until VM $vmname heartbeat state is ""Application healthy""."
@@ -339,7 +338,7 @@ function Get-StatusOfStartHyperVVM
 				Start-Sleep -Seconds 5
 				write-host "Checking status again in 5 sec."
 				$vm = Get-VM -Name $vmname -Computername $hostname
-				
+
 				if ($vm.State -eq "Running" -and $vm.Uptime.Minutes -gt 5)
 				{
 					$circuitBreaker = $true;
@@ -359,7 +358,7 @@ function Get-StatusOfStartHyperVVM
 					continue
 				}
 			}
-			
+
 			# After we reached the last vm in the parameter list we need to decide about the next steps
 			if ($i -eq $vmnames.Count -and $nrOfCreatintVMs -gt 0)
 			{
@@ -379,22 +378,22 @@ function Get-StatusOfStartHyperVVM
 }
 
 function Stop-VMUnfriendly
-{  
+{
 	<#
-	.Notes 
+	.Notes
 	alternative approach to shutdown VMs in case regular shutdown is not possible.
 	#>
 	[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]
   	param(
 		[Parameter()]
-		$vmname, 
+		$vmname,
 		[Parameter()]
 		$hostname,
 	 	[Parameter()]
         [switch]
         $Force
 	  )
-  
+
 	  Begin {
         if (-not $PSBoundParameters.ContainsKey('Verbose')) {
             $VerbosePreference = $PSCmdlet.SessionState.PSVariable.GetValue('VerbosePreference')
@@ -410,7 +409,7 @@ function Stop-VMUnfriendly
 
 	Process {
         <# Pre-impact code #>
-    
+
         # -Confirm --> $ConfirmPreference = 'Low'
         # ShouldProcess intercepts WhatIf* --> no need to pass it on
         if ($Force -or $PSCmdlet.ShouldProcess("ShouldProcess?")) {
@@ -420,42 +419,42 @@ function Stop-VMUnfriendly
 
 			$id = (
 				get-vm -ComputerName $hostname| Where-Object {$_.name -eq "$vmname"} | Select-Object id).id.guid
-			If ($id) 
+			If ($id)
 				{
 					write-host "VM GUID found: $id"
 				}
-			Else 
+			Else
 				{
-					write-warning "VM or GUID not found for VM: $vmname."; 
+					write-warning "VM or GUID not found for VM: $vmname.";
 					break
 				}
 
 			$vm_pid = (Get-CimInstance Win32_Process | Where-Object {$_.Name -match 'vmwp' -and $_.CommandLine -match $id}).ProcessId
-			If ($vm_pid) 
+			If ($vm_pid)
 				{
 					write-warning "Found VM worker process id: $vm_pid"
 					Write-warning "Killing VM worker process of VM: $vmname"
 					stop-process $vm_pid -Force
 				}
-			Else 
+			Else
 				{
 					write-host "No VM worker process found for VM: $vmname"
 				}
 
 		}
-        
+
 			<# Post-impact code #>
 	}
-	
+
 	End {
 		Write-Verbose ('[{0}] Confirm={1} ConfirmPreference={2} WhatIf={3} WhatIfPreference={4}' -f $MyInvocation.MyCommand, $Confirm, $ConfirmPreference, $WhatIf, $WhatIfPreference)
 	}
 }
 
 function Stop-VMByTurningOffVM
-{			
+{
 	<#
-	.Notes 
+	.Notes
 	helper method for stop vm. this one turns the vm off (instead of regular shutdown) -> dataloss is possible in some cases -> e.g. cache not flushed to disk
 	#>
 	[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]
@@ -480,7 +479,7 @@ function Stop-VMByTurningOffVM
 
     Process {
         <# Pre-impact code #>
-    
+
         # -Confirm --> $ConfirmPreference = 'Low'
         # ShouldProcess intercepts WhatIf* --> no need to pass it on
         if ($Force -or $PSCmdlet.ShouldProcess("ShouldProcess?")) {
@@ -492,15 +491,15 @@ function Stop-VMByTurningOffVM
 			while ($workInProgress)
 			{
 				for ($i=0; $vmnames.Count; $i++)
-				{	
-					$vmname = $vmnames[$i];			
+				{
+					$vmname = $vmnames[$i];
 					$vm = Get-VM -Name $vmname -Computername $hostname
 					if ($vm.State -eq "Running")
 					{
 						write-host "Turning off the VM $vmname in an unfriendly way."
 						write-debug "Current VM $vmname state: $($vm.State)"
 						write-debug "Current VM $vmname status: $($vm.Status)"
-						
+
 						Stop-VM -Name $vmname -ComputerName $hostname -TurnOff -ErrorAction SilentlyContinue
 						Start-Sleep -Seconds 5
 						write-debug "Current VM $vmname state: $($vm.State)"
@@ -509,7 +508,7 @@ function Stop-VMByTurningOffVM
 					}
 				}
 			}
-		}      
+		}
         <# Post-impact code #>
     }
 
@@ -521,13 +520,13 @@ function Stop-VMByTurningOffVM
 function Stop-HyperVVM
 {
 	<#
-	.Notes 
+	.Notes
 	Stops one or more VMs. In conjunction with get-statusstopofvm the function starts with a friendly shutdown approach and after 5 min. does a hard or unfriendly shutdown.
 	#>
 	[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]
     Param(
 		[Parameter()]
-		$vmnames, 
+		$vmnames,
 		[Parameter()]
 		$hostname,
         [Parameter()]
@@ -550,7 +549,7 @@ function Stop-HyperVVM
 
     Process {
         <# Pre-impact code #>
-    
+
         # -Confirm --> $ConfirmPreference = 'Low'
         # ShouldProcess intercepts WhatIf* --> no need to pass it on
         if ($Force -or $PSCmdlet.ShouldProcess("ShouldProcess?")) {
@@ -564,7 +563,7 @@ function Stop-HyperVVM
 
 				Stop-VMUnfriendly -vmname $vmname -hostname $hostname -Confirm:$false
 				$vm = Get-VM -Name $vmname -Computername $hostname
-			
+
 				if ($vm.State -ne "Off")
 				{
 					Write-Host "Shutting down VM $vmname on $hostname started."
@@ -572,13 +571,13 @@ function Stop-HyperVVM
 
 					Stop-VM -Name $vmname -ComputerName $hostname -Force -ErrorAction Stop
 				}
-				else 
+				else
 				{
 					Write-Host "VM $vmname on $hostname is already turned off."
 				}
 			}
 		}
-        
+
         <# Post-impact code #>
     }
 
@@ -599,7 +598,7 @@ function Get-StatusOfStopVM
 	while ($workInProgress)
 	{
 		for ($i=0; $i -lt $vmnames.Count; $i++)
-		{	
+		{
 			$vmname = $vmnames[$i];
 			write-host "Waiting until VM $vmname state is ""Off""."
 			$vm = Get-VM -Name $vmname -Computername $hostname
@@ -641,13 +640,13 @@ function Get-StatusOfStopVM
 function New-HyperVSnapshot
 {
 	<#
-	.Notes 
+	.Notes
 	Creates a new snapshot for one or more VMs. The snapshot name should be the same on all VMs because they are considered as a unit.
 	#>
 	[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]
     Param(
 		[Parameter()]
-		$vmnames, 
+		$vmnames,
 		[Parameter()]
 		$hostname,
         [Parameter()]
@@ -670,7 +669,7 @@ function New-HyperVSnapshot
 
     Process {
         <# Pre-impact code #>
-    
+
         # -Confirm --> $ConfirmPreference = 'Low'
         # ShouldProcess intercepts WhatIf* --> no need to pass it on
         if ($Force -or $PSCmdlet.ShouldProcess("ShouldProcess?")) {
@@ -694,7 +693,7 @@ function New-HyperVSnapshot
 			}
 
 		}
-        
+
         <# Post-impact code #>
     }
 
@@ -715,7 +714,7 @@ function Get-StatusOfNewHyperVSnapshot
 	while ($workInProgress)
 	{
 		for ($i=0; $i -lt $vmnames.Count; $i++)
-		{	
+		{
 			$vmname = $vmnames[$i];
 			write-host "Waiting until VM $vmname snapshot state is not ""Creating""."
 			$vm = Get-VM -Name $vmname -Computername $hostname
@@ -724,7 +723,7 @@ function Get-StatusOfNewHyperVSnapshot
 			{
 				write-host "Creating a snapshot on VM $vmname on host $hostname is still in progress"
 			}
-			else 
+			else
 			{
 				$finishedVMs.Add($vmname) | Out-Null
 				write-host "Snapshot $SnapshotName for the VM $vmname on host $hostname has been created.";
@@ -779,19 +778,19 @@ function Restore-HyperVSnapshot
 
     Process {
         <# Pre-impact code #>
-    
+
         # -Confirm --> $ConfirmPreference = 'Low'
         # ShouldProcess intercepts WhatIf* --> no need to pass it on
         if ($Force -or $PSCmdlet.ShouldProcess("ShouldProcess?")) {
             Write-Verbose ('[{0}] Reached command' -f $MyInvocation.MyCommand)
             # Variable scope ensures that parent session remains unchanged
 			$ConfirmPreference = 'None'
-			
+
 			for ($i=0;$i -lt $vmnames.Count; $i++)
 			{
 				$vmname = $vmnames[$i];
 				$snapshot = Get-VMsnapshot -VMname $vmname -ComputerName $hostname | Where-Object {$_.Name -eq "$SnapshotName"}
-				
+
 				if ($null -eq $snapshot)
 				{
 					write-error "Snapshot $SnapshotName of VM $vmname on host $hostname doesnt exist."
@@ -801,7 +800,7 @@ function Restore-HyperVSnapshot
 				write-host "Restoring snapshot $SnapshotName for VM $vmname on host $hostname have been started."
 				Restore-VMSnapshot -VMName $vmname -ComputerName $hostname -Name $SnapshotName -Confirm:$false -ErrorAction Stop
 			}
-		}  
+		}
         <# Post-impact code #>
     }
 
@@ -822,7 +821,7 @@ function Get-StatusOfRestoreHyperVSnapshot
 	while ($workInProgress)
 	{
 		for ($i=0; $i -lt $vmnames.Count; $i++)
-		{	
+		{
 			$vmname = $vmnames[$i];
 			write-host "Waiting until VM $vmname state is not ""Applying""."
 			$vm = Get-VM -Name $vmname -Computername $hostname
@@ -831,7 +830,7 @@ function Get-StatusOfRestoreHyperVSnapshot
 			{
 				write-host "Restoring snapshot for VM $vmname on host $hostname is still in progress.";
 			}
-			else 
+			else
 			{
 				$finishedVMs.Add($vmname) | Out-Null
 				write-host "Snapshot $SnapshotName for the VM $vmname has been restored.";
@@ -863,7 +862,7 @@ function Remove-HyperVSnapshot
 	[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]
     Param(
 		[Parameter()]
-		$vmnames, 
+		$vmnames,
 		[Parameter()]
 		$hostname,
         [Parameter()]
@@ -886,7 +885,7 @@ function Remove-HyperVSnapshot
 
     Process {
         <# Pre-impact code #>
-    
+
         # -Confirm --> $ConfirmPreference = 'Low'
         # ShouldProcess intercepts WhatIf* --> no need to pass it on
         if ($Force -or $PSCmdlet.ShouldProcess("ShouldProcess?")) {
@@ -898,7 +897,7 @@ function Remove-HyperVSnapshot
 			{
 				$vmname = $vmnames[$i];
 				$snapshot = Get-VMsnapshot -VMname $vmname -ComputerName $hostname | Where-Object {$_.Name -eq "$SnapshotName"}
-				
+
 				if ($null -eq $snapshot)
 				{
 					Write-Warning "Snapshot $SnapshotName of VM $vmname on host $hostname doesnt exist."
@@ -909,7 +908,7 @@ function Remove-HyperVSnapshot
 				Remove-VMSnapshot -VMName $vmname -ComputerName $hostname -Name $SnapshotName -Confirm:$false -ErrorAction Stop
 			}
 		}
-        
+
         <# Post-impact code #>
     }
 
@@ -930,7 +929,7 @@ function Get-StatusOfRemoveHyperVSnapshot
 	while ($workInProgress)
 	{
 		for ($i=0; $i -lt $vmnames.Count; $i++)
-		{	
+		{
 			$vmname = $vmnames[$i];
 			write-host "Waiting until VM $vmname state is not ""Merging""."
 			$vm = Get-VM -Name $vmname -Computername $hostname
@@ -939,7 +938,7 @@ function Get-StatusOfRemoveHyperVSnapshot
 			{
 				write-host "Removing snapshot $SnapshotName for VM $vmname on host $hostname is still in progress.";
 			}
-			else 
+			else
 			{
 				$finishedVMs.Add($vmname) | Out-Null
 				write-host "Snapshot $SnapshotName for the VM $vmname has been removed.";
@@ -965,7 +964,7 @@ function Get-StatusOfRemoveHyperVSnapshot
 #region Control hyper-v
 Try
 {
-	[bool]$debug = Get-VstsTaskVariable -Name System.Debug -AsBool
+	#[bool]$debug = Get-VstsTaskVariable -Name System.Debug -AsBool
 	[string]$Action = Get-VstsInput -Name Action
 	[string]$VMName = Get-VstsInput -Name VMName
 	[string]$Computername = Get-VstsInput -Name Computername
@@ -1007,14 +1006,14 @@ Try
 Catch
 {
 	$currentUser = [Security.Principal.WindowsIdentity]::GetCurrent();
-	
+
 	Write-Warning ('You have may not enough permission to use the hyper-v cmdlets, please check this:
 	Add the ' + $currentUser.Name + ' user to the Hyper-V Administrator group on the host on which the agent run.
 	This current user can add to the group with this command: ([adsi]""WinNT://./Hyper-V Administrators,group"").Add(""WinNT://$($env:UserDomain)/$($env:Username,user""))')
 
 	Write-Error $_.Exception.Message;
-} 
-finally 
+}
+finally
 {
 	Set-HyperVCmdletCacheEnabled -Confirm:$false
     Trace-VstsLeavingInvocation $MyInvocation
