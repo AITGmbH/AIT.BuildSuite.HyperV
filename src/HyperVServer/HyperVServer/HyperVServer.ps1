@@ -1,25 +1,7 @@
-﻿param(
-[Parameter(Mandatory)]
-[ValidateNotNullOrEmpty()]
-[string]
-$Action,
+﻿[CmdletBinding()]
+param()
 
-[Parameter(Mandatory)]
-[ValidateNotNullOrEmpty()]
-[string]
-$VMName,
-
-[Parameter(Mandatory)]
-[ValidateNotNullOrEmpty()]
-[string]
-$Computername,
-
-[Parameter(Mandatory=$false)]
-[string]
-$SnapshotName
-)
-
-$ConfirmPreference=”None”
+Trace-VstsEnteringInvocation $MyInvocation
 
 function Get-HyperVCmdletsAvailable
 {
@@ -980,13 +962,20 @@ function Get-StatusOfRemoveHyperVSnapshot
 }
 #endregion
 
-Get-HyperVCmdletsAvailable
-Get-ParameterOverview
-Set-HyperVCmdletCacheDisabled -Confirm:$false
-
 #region Control hyper-v
 Try
 {
+	[bool]$debug = Get-VstsTaskVariable -Name System.Debug -AsBool
+	[string]$Action = Get-VstsInput -Name Action
+	[string]$VMName = Get-VstsInput -Name VMName
+	[string]$Computername = Get-VstsInput -Name Computername
+	[string]$SnapshotName = Get-VstsInput -Name SnapshotName
+	[string]$ConfirmPreference="None"
+
+	Get-HyperVCmdletsAvailable
+	Get-ParameterOverview
+	Set-HyperVCmdletCacheDisabled -Confirm:$false
+
 	$vmNames= Get-VMNamesFromVMNameParameter
 	$hostName = $Computername
 	Get-VMExists -vmnames $vmNames -hostname $hostName
@@ -1024,9 +1013,10 @@ Catch
 	This current user can add to the group with this command: ([adsi]""WinNT://./Hyper-V Administrators,group"").Add(""WinNT://$($env:UserDomain)/$($env:Username,user""))')
 
 	Write-Error $_.Exception.Message;
+} 
+finally 
+{
+	Set-HyperVCmdletCacheEnabled -Confirm:$false
+    Trace-VstsLeavingInvocation $MyInvocation
 }
-
-Set-HyperVCmdletCacheEnabled -Confirm:$false
-
-exit 0
 #endregion
