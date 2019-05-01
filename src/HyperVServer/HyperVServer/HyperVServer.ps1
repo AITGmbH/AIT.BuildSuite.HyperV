@@ -1008,9 +1008,8 @@ Catch
 	$currentUser = [Security.Principal.WindowsIdentity]::GetCurrent();
 
 	Write-Warning ('You have may not enough permission to use the hyper-v cmdlets, please check this:
-	Add the ' + $currentUser.Name + ' user to the Hyper-V Administrator group on the host on which the agent run.
-	This current user can add to the group with this command: net localgroup "Hyper-V Administrators" ' + $currentUser.Name + ' /add')
-
+	Add the ' + $currentUser.Name + ' user to the ""Hyper-V Administrator"" and ""Remote Management Users"" group on the target hyper-v host which the agent wants to access.
+	You can authorize the build agent user using two commands: net localgroup "Hyper-V Administrators" ' + $currentUser.Name + ' /add and net localgroup "Remote Management Users" ' + $currentUser.Name + ' /add')
 	Write-Error $_.Exception.Message;
 }
 finally
