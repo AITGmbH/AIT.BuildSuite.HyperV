@@ -277,7 +277,7 @@ function Start-HyperVVM
 	}
 }
 
-function Get-StatusOfStartHyperVVM
+function Get-HeartbeatStatusOfStartHyperVVM
 {
 	param($vmnames, $hostname)
 
@@ -339,19 +339,25 @@ function Get-StatusOfStartHyperVVM
 				write-host "Checking status again in 5 sec."
 				$vm = Get-VM -Name $vmname -Computername $hostname
 
-				if ($vm.State -eq "Running" -and $vm.Uptime.Minutes -gt 5)
+				if ($null -eq $heartbeatTimeout -or $heartbeatTimeout -eq 0)
+				{
+					# If the Heartbeat Timeout is set we stay at the default of 5 minutes.
+					$heartbeatTimeout = 5;
+				}	
+
+				if ($vm.State -eq "Running" -and $vm.Uptime.Minutes -gt $heartbeatTimeout)
 				{
 					$circuitBreaker = $true;
-					Write-Warning "Starting VM $vmname reached 5 minute timeout limit";
+					Write-Warning "Starting VM $vmname reached $heartbeatTimeout minute timeout limit";
 					Write-Warning "Hyper-V heartbeat has not reported healthy state."
 					Write-Warning "VM $vmname is in running state and the task finishs execution";
 					break;
 				}
 
-				if ($vm.State -ne "Running" -and $vm.Uptime.Minutes -gt 5)
+				if ($vm.State -ne "Running" -and $vm.Uptime.Minutes -gt $heartbeatTimeout)
 				{
 					$circuitBreaker = $true;
-					Write-Warning "Starting VM $vmname reached 5 minute timeout limit";
+					Write-Warning "Starting VM $vmname reached $heartbeatTimeout minute timeout limit";
 					Write-Warning "Hyper-V heartbeat has not reported healthy state."
 					Write-Error "Abording starting VM $vmname because VM state is not running"
 					Write-Error "Please check logs on Hyper-V server and Build agent to find the root cause and fix any issues."
@@ -359,8 +365,47 @@ function Get-StatusOfStartHyperVVM
 				}
 			}
 
+			$workInProgress = $false;
+			write-host "The VM $vmname has been started.";
+		}
+	}
+
+	write-host "All VM(s) have been started."
+}
+
+function Get-TimeBasedStatusOfStartHyperVVM
+{
+	param($vmnames, $hostname)
+
+	write-host "Waiting until all VM(s) have been started."
+
+	$finishedVMs = New-Object System.Collections.ArrayList;
+
+	$workInProgress = $true;
+	while ($workInProgress)
+	{
+		for ($i=0; $i -lt $vmnames.Count; $i++)
+		{
+			$vmname = $vmnames[$i];
+			if (!$vmnames.Contains($vmname))
+			{
+				continue
+			}
+
+			$vm = Get-VM -Name $vmname -Computername $hostname
+
+			if ($vm.Status -match "Starting")
+			{
+				Write-Host "VM $vmname on host $hostname is still in status Starting"
+			}
+			else
+			{
+				$finishedVMs.Add($vmname) | Out-Null
+				write-host "VM $vmname is now ready."
+			}
+
 			# After we reached the last vm in the parameter list we need to decide about the next steps
-			if ($i -eq $vmnames.Count -and $nrOfCreatintVMs -gt 0)
+			if ($vmnames.Count -ne $finishedVMs.Count)
 			{
 				$workInProgress = $true;
 				Start-Sleep -Seconds 5
@@ -369,13 +414,28 @@ function Get-StatusOfStartHyperVVM
 			else
 			{
 				$workInProgress = $false;
-				write-host "The VM $vmname has been started.";
 			}
 		}
 	}
 
-	write-host "All VM(s) have been started."
+	[int]$waitInterval = $timeBasedStatusWaitInterval / 30;
+
+	for (int i;i++;i -le 30)
+	{
+		Start-Sleep -Seconds $waitInterval sec
+		write-host "Checking status again in $waitInterval sec."
+	}
+	write-host "Waiting interval $timeBasedStatusWaitIntervalreached seconds reached. We go on ..."
 }
+
+function Get-StatusOfStartHyperVVM
+{
+	switch ($statusCheckType) {
+		"Time" { Get-TimeBasedStatusOfStartHyperVVM }
+		"HeartBeat" {Get-HeartbeatStatusOfStartHyperVVM}
+	}
+}
+
 
 function Stop-VMUnfriendly
 {
@@ -969,7 +1029,11 @@ Try
 	[string]$VMName = Get-VstsInput -Name VMName
 	[string]$Computername = Get-VstsInput -Name Computername
 	[string]$SnapshotName = Get-VstsInput -Name SnapshotName
+	[string]$statusCheckType = Get-VstsInput -Name SnapshotName StatusCheckType
+	[int]$timeBasedStatusWaitInterval = Get-VstsInput -Name StatusWaitInterval
 	[string]$ConfirmPreference="None"
+
+	[int]$heartbeatTimeout = Get-VstsTaskVariable -Name HyperV.HeartbeatTimeout
 
 	Get-HyperVCmdletsAvailable
 	Get-ParameterOverview
