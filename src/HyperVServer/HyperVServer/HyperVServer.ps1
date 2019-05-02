@@ -141,6 +141,15 @@ function Get-ParameterOverview
 	write-host "Assigned VM name(s) are $VMName.";
 	write-host "Assigned Hyper-V server host is $Computername.";
 
+	if ($Action -eq "StartVM")
+	{
+		write-host "Status check type: $statusCheckType";
+		if ($statusCheckType -eq "WaitingTime")
+		{
+			write-host "Waiting time interval (in sec): $timeBasedStatusWaitInterval"
+		}
+	}
+
 	if ($SnapshotName) {
 		write-host "Assigned snapshot/checkpoint name is $SnapshotName.";
 	}
@@ -277,7 +286,7 @@ function Start-HyperVVM
 	}
 }
 
-function Get-HeartbeatStatusOfStartHyperVVM
+function Get-ApplicationsHealthyStatusOfStartHyperVVM
 {
 	param($vmnames, $hostname)
 
@@ -431,8 +440,8 @@ function Get-TimeBasedStatusOfStartHyperVVM
 function Get-StatusOfStartHyperVVM
 {
 	switch ($statusCheckType) {
-		"Time" { Get-TimeBasedStatusOfStartHyperVVM }
-		"HeartBeat" {Get-HeartbeatStatusOfStartHyperVVM}
+		"WaitingTime" { Get-TimeBasedStatusOfStartHyperVVM }
+		"HeartBeatApplicationsHealthy" {Get-ApplicationsHealthyStatusOfStartHyperVVM}
 	}
 }
 
@@ -1029,8 +1038,8 @@ Try
 	[string]$VMName = Get-VstsInput -Name VMName
 	[string]$Computername = Get-VstsInput -Name Computername
 	[string]$SnapshotName = Get-VstsInput -Name SnapshotName
-	[string]$statusCheckType = Get-VstsInput -Name SnapshotName StatusCheckType
-	[int]$timeBasedStatusWaitInterval = Get-VstsInput -Name StatusWaitInterval
+	[string]$statusCheckType = Get-VstsInput -Name StartVMStatusCheckType
+	[int]$timeBasedStatusWaitInterval = Get-VstsInput -Name StartVMWaitTimeBasedCheckInterval
 	[string]$ConfirmPreference="None"
 
 	[int]$heartbeatTimeout = Get-VstsTaskVariable -Name HyperV.HeartbeatTimeout
@@ -1045,23 +1054,23 @@ Try
 
 	switch ($Action)
 	{
-		"Start VM" {
+		"StartVM" {
 			Start-HyperVVM -vmnames $vmNames -hostname $hostName -Confirm:$false
 			Get-StatusOfStartHyperVVM -vmnames $vmNames -hostname $hostName
 		}
-		"Stop VM" {
+		"StopVM" {
 			Stop-HyperVVM -vmnames $vmNames -hostname $hostName -Confirm:$false
 			Get-StatusOfStopVM -vmnames $vmNames -hostname $hostName
 		}
-		"Create Snapshot" {
+		"CreateSnapshot" {
 			New-HyperVSnapshot -vmnames $vmNames -hostname $hostName -Confirm:$false
 			Get-StatusOfNewHyperVSnapshot -vmnames $vmNames -hostname $hostName
 		}
-		"Restore Snapshot" {
+		"RestoreSnapshot" {
 			Restore-HyperVSnapshot -vmnames $vmNames -hostname $hostName -Confirm:$false
 			Get-StatusOfRestoreHyperVSnapshot -vmnames $vmNames -hostname $hostName
 		}
-		"Remove Snapshot" {
+		"RemoveSnapshot" {
 			Remove-HyperVSnapshot -vmnames $vmNames -hostname $hostName -Confirm:$false
 			Get-StatusOfRemoveHyperVSnapshot -vmnames $vmNames -hostname $hostName
 		}
