@@ -350,11 +350,17 @@ function Get-ApplicationsHealthyStatusOfStartHyperVVM
 
 				if ($null -eq $heartbeatTimeout -or $heartbeatTimeout -eq 0)
 				{
+					Write-Verbose "Assigning default value to heartbeat timeout $heartbeatTimeout";
 					# If the Heartbeat Timeout is set we stay at the default of 5 minutes.
-					$heartbeatTimeout = 5;
+					$heartbeatTimeout = 5*60;
 				}	
+				else 
+				{
+					Write-Host "Assigning custom value to heartbeat timeout $heartbeatTimeout"
+				}
 
-				if ($vm.State -eq "Running" -and $vm.Uptime.Minutes -gt $heartbeatTimeout)
+
+				if ($vm.State -eq "Running" -and $vm.Uptime.Seconds -gt $heartbeatTimeout)
 				{
 					$circuitBreaker = $true;
 					Write-Warning "Starting VM $vmname reached $heartbeatTimeout minute timeout limit";
@@ -363,7 +369,7 @@ function Get-ApplicationsHealthyStatusOfStartHyperVVM
 					break;
 				}
 
-				if ($vm.State -ne "Running" -and $vm.Uptime.Minutes -gt $heartbeatTimeout)
+				if ($vm.State -ne "Running" -and $vm.Uptime.Seconds -gt $heartbeatTimeout)
 				{
 					$circuitBreaker = $true;
 					Write-Warning "Starting VM $vmname reached $heartbeatTimeout minute timeout limit";
@@ -426,13 +432,22 @@ function Get-TimeBasedStatusOfStartHyperVVM
 			}
 		}
 	}
-
-	[int]$waitInterval = $timeBasedStatusWaitInterval / 30;
-
-	for (int i;i++;i -le 30)
+	
+	if ($null == $waitingTimeNumberOfStatusNotifications -or 0 == $waitingTimeNumberOfStatusNotifications)
 	{
-		Start-Sleep -Seconds $waitInterval sec
-		write-host "Checking status again in $waitInterval sec."
+		Write-Verbose "Assigning default value to Waiting time status notifications $waitingTimeNumberOfStatusNotifications";
+		$waitingTimeNumberOfStatusNotifications = 30;
+	}
+	else {
+		Write-Host "Assigning custom value to Waiting time status notifications $waitingTimeNumberOfStatusNotifications";
+	}
+
+	[int]$waitingInterval = $timeBasedStatusWaitInterval / 30;
+
+	for ($i=1; $i -le $waitingTimeNumberOfStatusNotifications; $i++)
+	{
+		Start-Sleep -Seconds $waitingInterval sec
+		write-host "Checking status again in $waitingInterval sec."
 	}
 	write-host "Waiting interval $timeBasedStatusWaitIntervalreached seconds reached. We go on ..."
 }
@@ -1043,6 +1058,7 @@ Try
 	[string]$ConfirmPreference="None"
 
 	[int]$heartbeatTimeout = Get-VstsTaskVariable -Name HyperV.HeartbeatTimeout
+	[int]$waitingTimeNumberOfStatusNotifications = Get-VstsTaskVariable -Name HyperV.WaitingNumberOfStatusNotifications
 
 	Get-HyperVCmdletsAvailable
 	Get-ParameterOverview

@@ -71,9 +71,9 @@
     {
       "name": "StartVMWaitTimeBasedCheckInterval",
       "type": "integer",
-      "label": "Start VM - Status Check Waiting Interval",
+      "label": "Waiting Interval",
       "defaultValue": "300",
-      "required": true,
+      "required": false,
       "helpMarkDown": "The waiting period until it is assumed that the VM has been started correctly. The interval is specified in seconds. 0 or no value means a default value of 5 minutes.",
       "visibleRule": "StartVMStatusCheckType = WaitingTime"
     }
