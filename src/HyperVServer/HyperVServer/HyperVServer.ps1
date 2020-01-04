@@ -290,7 +290,7 @@ function Get-ApplicationsHealthyStatusOfStartHyperVVM
 {
 	param($vmnames, $hostname)
 
-	write-host "Waiting until all VM(s) have been started."
+	write-host "Waiting until all VM(s) have been started (using ApplicationHealthy status)."
 
 	$finishedVMs = New-Object System.Collections.ArrayList;
 
@@ -300,10 +300,6 @@ function Get-ApplicationsHealthyStatusOfStartHyperVVM
 		for ($i=0; $i -lt $vmnames.Count; $i++)
 		{
 			$vmname = $vmnames[$i];
-			if (!$vmnames.Contains($vmname))
-			{
-				continue
-			}
 
 			$vm = Get-VM -Name $vmname -Computername $hostname
 
@@ -392,8 +388,7 @@ function Get-TimeBasedStatusOfStartHyperVVM
 {
 	param($vmnames, $hostname)
 
-	write-host "Waiting until all VM(s) have been started."
-
+	write-host "Waiting until all VM(s) have been started (using TimeBased check)."
 	$finishedVMs = New-Object System.Collections.ArrayList;
 
 	$workInProgress = $true;
@@ -402,10 +397,6 @@ function Get-TimeBasedStatusOfStartHyperVVM
 		for ($i=0; $i -lt $vmnames.Count; $i++)
 		{
 			$vmname = $vmnames[$i];
-			if (!$vmnames.Contains($vmname))
-			{
-				continue
-			}
 
 			$vm = Get-VM -Name $vmname -Computername $hostname
 
@@ -420,7 +411,7 @@ function Get-TimeBasedStatusOfStartHyperVVM
 			}
 
 			# After we reached the last vm in the parameter list we need to decide about the next steps
-			if ($vmnames.Count -ne $finishedVMs.Count)
+			if ($vmnames.Count -lt $finishedVMs.Count)
 			{
 				$workInProgress = $true;
 				Start-Sleep -Seconds 5
@@ -433,7 +424,7 @@ function Get-TimeBasedStatusOfStartHyperVVM
 		}
 	}
 	
-	if ($null == $waitingTimeNumberOfStatusNotifications -or 0 == $waitingTimeNumberOfStatusNotifications)
+	if ($null -eq $waitingTimeNumberOfStatusNotifications -or 0 -eq $waitingTimeNumberOfStatusNotifications)
 	{
 		Write-Verbose "Assigning default value to Waiting time status notifications $waitingTimeNumberOfStatusNotifications";
 		$waitingTimeNumberOfStatusNotifications = 30;
@@ -442,21 +433,25 @@ function Get-TimeBasedStatusOfStartHyperVVM
 		Write-Host "Assigning custom value to Waiting time status notifications $waitingTimeNumberOfStatusNotifications";
 	}
 
-	[int]$waitingInterval = $timeBasedStatusWaitInterval / 30;
+	[int]$waitingInterval = ($timeBasedStatusWaitInterval / 30);
 
 	for ($i=1; $i -le $waitingTimeNumberOfStatusNotifications; $i++)
 	{
-		Start-Sleep -Seconds $waitingInterval sec
-		write-host "Checking status again in $waitingInterval sec."
+		Start-Sleep -Seconds $waitingInterval
+		$timeBasedStatusWaitIntervalLeft = $timeBasedStatusWaitInterval - $i * $waitingInterval;
+
+		write-host "Waiting interval is reached in $timeBasedStatusWaitIntervalLeft sec."
 	}
-	write-host "Waiting interval $timeBasedStatusWaitIntervalreached seconds reached. We go on ..."
+	write-host "Waiting interval $timeBasedStatusWaitInterval seconds reached. We go on ..."
 }
 
 function Get-StatusOfStartHyperVVM
 {
+	param($vmnames, $hostname)
+
 	switch ($statusCheckType) {
-		"WaitingTime" { Get-TimeBasedStatusOfStartHyperVVM }
-		"HeartBeatApplicationsHealthy" {Get-ApplicationsHealthyStatusOfStartHyperVVM}
+		"WaitingTime" { Get-TimeBasedStatusOfStartHyperVVM -vmnames $vmNames -hostname $hostName }
+		"HeartBeatApplicationsHealthy" {Get-ApplicationsHealthyStatusOfStartHyperVVM -vmnames $vmNames -hostname $hostName}
 	}
 }
 
