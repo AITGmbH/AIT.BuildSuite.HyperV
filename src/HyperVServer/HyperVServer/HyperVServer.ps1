@@ -538,6 +538,10 @@ function Stop-VMByTurningOffVM
 	#>
 	[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]
     Param(
+		[Parameter()]
+		$vmnames,
+		[Parameter()]
+		$hostName,
         [Parameter()]
         [switch]
         $Force
@@ -573,13 +577,13 @@ function Stop-VMByTurningOffVM
 				{
 					$vmname = $vmnames[$i];
 					$vm = Get-VM -Name $vmname -Computername $hostname
-					if ($vm.State -eq "Running")
+					if ($vm.State -ne "Off")
 					{
-						write-host "Turning off the VM $vmname in an unfriendly way."
+						write-host "Direct turning off the VM $vmname (no regular gracefull shutdown)."
 						write-debug "Current VM $vmname state: $($vm.State)"
 						write-debug "Current VM $vmname status: $($vm.Status)"
 
-						Stop-VM -Name $vmname -ComputerName $hostname -TurnOff -ErrorAction SilentlyContinue
+						Stop-VM -Name $vmname -ComputerName $hostname -TurnOff -Force -ErrorAction SilentlyContinue
 						Start-Sleep -Seconds 5
 						write-debug "Current VM $vmname state: $($vm.State)"
 						write-debug "Current VM $vmname status: $($vm.Status)"
@@ -596,7 +600,7 @@ function Stop-VMByTurningOffVM
     }
 }
 
-function Stop-HyperVVM
+function Start-HyperVVMShutdown
 {
 	<#
 	.Notes
@@ -640,7 +644,7 @@ function Stop-HyperVVM
 			{
 				$vmname = $vmnames[$i];
 
-				Stop-VMUnfriendly -vmname $vmname -hostname $hostname -Confirm:$false
+				#Stop-VMUnfriendly -vmname $vmname -hostname $hostname -Confirm:$false
 				$vm = Get-VM -Name $vmname -Computername $hostname
 
 				if ($vm.State -ne "Off")
@@ -665,7 +669,7 @@ function Stop-HyperVVM
     }
 }
 
-function Get-StatusOfStopVM
+function Get-StatusOfShutdownVM
 {
 	write-host "Waiting until all VM(s) has been shutted down."
 
@@ -697,7 +701,7 @@ function Get-StatusOfStopVM
 			{
 				# we reached a timeout of approx. 5 min
 				# its now the time to stop VMs in a very unfriendly way
-				Stop-VMByTurningOffVM
+				Stop-VMByTurningOffVM -vmnames $vmnames -hostName $hostname
 				return;
 			}
 
@@ -715,6 +719,56 @@ function Get-StatusOfStopVM
 	write-host "All VM(s) have been shutted down."
 }
 
+function Start-TurnOfVM {
+	<#
+	.Notes
+	Stops one or more VMs. In conjunction with get-statusstopofvm the function starts with a friendly shutdown approach and after 5 min. does a hard or unfriendly shutdown.
+	#>
+	[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]
+    Param(
+		[Parameter()]
+		$vmnames,
+		[Parameter()]
+		$hostname,
+        [Parameter()]
+        [switch]
+        $Force
+    )
+
+	Begin {
+        if (-not $PSBoundParameters.ContainsKey('Verbose')) {
+            $VerbosePreference = $PSCmdlet.SessionState.PSVariable.GetValue('VerbosePreference')
+        }
+        if (-not $PSBoundParameters.ContainsKey('Confirm')) {
+            $ConfirmPreference = $PSCmdlet.SessionState.PSVariable.GetValue('ConfirmPreference')
+        }
+        if (-not $PSBoundParameters.ContainsKey('WhatIf')) {
+            $WhatIfPreference = $PSCmdlet.SessionState.PSVariable.GetValue('WhatIfPreference')
+        }
+        Write-Verbose ('[{0}] Confirm={1} ConfirmPreference={2} WhatIf={3} WhatIfPreference={4}' -f $MyInvocation.MyCommand, $Confirm, $ConfirmPreference, $WhatIf, $WhatIfPreference)
+    }
+
+    Process {
+        <# Pre-impact code #>
+
+        # -Confirm --> $ConfirmPreference = 'Low'
+        # ShouldProcess intercepts WhatIf* --> no need to pass it on
+        if ($Force -or $PSCmdlet.ShouldProcess("ShouldProcess?")) {
+            Write-Verbose ('[{0}] Reached command' -f $MyInvocation.MyCommand)
+            # Variable scope ensures that parent session remains unchanged
+            $ConfirmPreference = 'None'
+
+			Stop-VMByTurningOffVM -vmnames $vmnames -hostname $hostname
+		}
+	
+        <# Post-impact code #>
+    }
+
+    End {
+        Write-Verbose ('[{0}] Confirm={1} ConfirmPreference={2} WhatIf={3} WhatIfPreference={4}' -f $MyInvocation.MyCommand, $Confirm, $ConfirmPreference, $WhatIf, $WhatIfPreference)
+    }
+
+}
 
 function New-HyperVSnapshot
 {
@@ -1069,9 +1123,12 @@ Try
 			Start-HyperVVM -vmnames $vmNames -hostname $hostName -Confirm:$false
 			Get-StatusOfStartHyperVVM -vmnames $vmNames -hostname $hostName
 		}
-		"StopVM" {
-			Stop-HyperVVM -vmnames $vmNames -hostname $hostName -Confirm:$false
-			Get-StatusOfStopVM -vmnames $vmNames -hostname $hostName
+		"ShutdownVM" {
+			Start-HyperVVMShutdown -vmnames $vmNames -hostname $hostName -Confirm:$false
+			Get-StatusOfShutdownVM -vmnames $vmNames -hostname $hostName
+		}
+		"TurnOffVM" {
+			Start-TurnOfVM -vmnames $vmNames -hostname $hostName -Confirm:$false
 		}
 		"CreateSnapshot" {
 			New-HyperVSnapshot -vmnames $vmNames -hostname $hostName -Confirm:$false

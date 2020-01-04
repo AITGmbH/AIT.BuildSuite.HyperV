@@ -8,7 +8,7 @@
   "targets": [{
     "id": "Microsoft.VisualStudio.Services"
   }],
-  "description": "Remote control Hyper-V VMs and perform actions like start and stop VM, create or restore a snapshot",
+  "description": "Remote control Hyper-V VMs and perform actions like start and stop VM, create or restore a snapshot (without SCVMM)",
   "repository": {
     "type": "git",
     "uri": "https://github.com/AITGmbH/AIT.BuildSuite.HyperV"
