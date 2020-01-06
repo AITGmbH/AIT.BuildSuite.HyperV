@@ -573,7 +573,7 @@ function Stop-VMByTurningOffVM
 			$workInProgress = $true;
 			while ($workInProgress)
 			{
-				for ($i=0; $vmnames.Count; $i++)
+				for ($i=0;$i -lt $vmnames.Count; $i++)
 				{
 					$vmname = $vmnames[$i];
 					$vm = Get-VM -Name $vmname -Computername $hostname
@@ -758,7 +758,7 @@ function Start-TurnOfVM {
             # Variable scope ensures that parent session remains unchanged
             $ConfirmPreference = 'None'
 
-			Stop-VMByTurningOffVM -vmnames $vmnames -hostname $hostname
+			Stop-VMByTurningOffVM -vmnames $vmnames -hostname $hostname -Confirm:$false
 		}
 	
         <# Post-impact code #>
