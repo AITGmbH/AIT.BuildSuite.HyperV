@@ -586,6 +586,10 @@ function Stop-VMByTurningOffVM
 					write-debug "Current VM $vmname status: $($vm.Status)"
 					Write-Host "VM $vmname on $hostname is now turned off."
 				}
+				else 
+				{
+					Write-Host "VM $($vm.Name) is already turned off."
+				}
 			}			
 		}
         <# Post-impact code #>
