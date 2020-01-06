@@ -569,28 +569,24 @@ function Stop-VMByTurningOffVM
             Write-Verbose ('[{0}] Reached command' -f $MyInvocation.MyCommand)
             # Variable scope ensures that parent session remains unchanged
             $ConfirmPreference = 'None'
-
-			$workInProgress = $true;
-			while ($workInProgress)
+			
+			for ($i=0;$i -lt $vmnames.Count; $i++)
 			{
-				for ($i=0;$i -lt $vmnames.Count; $i++)
+				$vmname = $vmnames[$i];
+				$vm = Get-VM -Name $vmname -Computername $hostname
+				if ($vm.State -ne "Off")
 				{
-					$vmname = $vmnames[$i];
-					$vm = Get-VM -Name $vmname -Computername $hostname
-					if ($vm.State -ne "Off")
-					{
-						write-host "Direct turning off the VM $vmname (no regular gracefull shutdown)."
-						write-debug "Current VM $vmname state: $($vm.State)"
-						write-debug "Current VM $vmname status: $($vm.Status)"
+					write-host "Direct turning off the VM $vmname (no regular gracefull shutdown)."
+					write-debug "Current VM $vmname state: $($vm.State)"
+					write-debug "Current VM $vmname status: $($vm.Status)"
 
-						Stop-VM -Name $vmname -ComputerName $hostname -TurnOff -Force -ErrorAction SilentlyContinue
-						Start-Sleep -Seconds 5
-						write-debug "Current VM $vmname state: $($vm.State)"
-						write-debug "Current VM $vmname status: $($vm.Status)"
-						Write-Host "VM $vmname on $hostname is now turned off."
-					}
+					Stop-VM -Name $vmname -ComputerName $hostname -TurnOff -Force -ErrorAction SilentlyContinue
+					Start-Sleep -Seconds 5
+					write-debug "Current VM $vmname state: $($vm.State)"
+					write-debug "Current VM $vmname status: $($vm.Status)"
+					Write-Host "VM $vmname on $hostname is now turned off."
 				}
-			}
+			}			
 		}
         <# Post-impact code #>
     }
