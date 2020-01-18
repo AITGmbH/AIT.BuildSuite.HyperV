@@ -343,12 +343,14 @@ function Get-ApplicationsHealthyStatusOfStartHyperVVM
 				Start-Sleep -Seconds 5
 				write-host "Checking status again in 5 sec."
 				$vm = Get-VM -Name $vmname -Computername $hostname
+				$heartbeatTimeout = $appHealthyHeartbeatTimeout;
 
 				if ($null -eq $heartbeatTimeout -or $heartbeatTimeout -eq 0)
 				{
-					Write-Verbose "Assigning default value to heartbeat timeout $heartbeatTimeout";
+					Write-Verbose "Assigning default value to heartbeat timeout because it is $heartbeatTimeout";
 					# If the Heartbeat Timeout is set we stay at the default of 5 minutes.
 					$heartbeatTimeout = 5*60;
+					Write-Host "Default heartbeat timeout is $heartbeatTimeout";
 				}	
 				else 
 				{
@@ -1106,8 +1108,8 @@ Try
 	[int]$timeBasedStatusWaitInterval = Get-VstsInput -Name StartVMWaitTimeBasedCheckInterval
 	[string]$ConfirmPreference="None"
 
-	[int]$heartbeatTimeout = Get-VstsTaskVariable -Name HyperV.HeartbeatTimeout
-	[int]$waitingTimeNumberOfStatusNotifications = Get-VstsTaskVariable -Name HyperV.WaitingNumberOfStatusNotifications
+	[int]$appHealthyHeartbeatTimeout = Get-VstsTaskVariable -Name HyperV.HyperV.StartVMAppHealthyHeartbeatTimeout
+	[int]$waitingTimeNumberOfStatusNotifications = Get-VstsTaskVariable -Name HyperV.StartVMWaitingNumberOfStatusNotifications
 
 	Get-HyperVCmdletsAvailable
 	Get-ParameterOverview
