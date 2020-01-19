@@ -1110,6 +1110,16 @@ Try
 
 	[int]$appHealthyHeartbeatTimeout = Get-VstsTaskVariable -Name HyperV.HyperV.StartVMAppHealthyHeartbeatTimeout
 	[int]$waitingTimeNumberOfStatusNotifications = Get-VstsTaskVariable -Name HyperV.StartVMWaitingNumberOfStatusNotifications
+	[string]$hyperVPsModuleVersion = Get-VstsTaskVariable -Name HyperV.PsModuleVersion
+
+	if (![string]::IsNullOrEmpty($hyperVPsModuleVersion))
+	{
+		Write-Host "Loading Hyper-V PowerShell module version $hyperVPsModuleVersion";
+		Import-Module –Name Hyper-V -Version $hyperVPsModuleVersion;
+	}
+	else {
+		Write-Host "Loading Hyper-V system default PowerShell module"
+	}
 
 	Get-HyperVCmdletsAvailable
 	Get-ParameterOverview
