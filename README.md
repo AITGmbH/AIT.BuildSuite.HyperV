@@ -1,5 +1,5 @@
 # Introduction 
-Remote control one or many virtual machine(s) on a (remote) Hyper-V Server. 
+Remote control one or many virtual machine(s) on a (remote) Hyper-V Server (without SCVMM). 
 The Azure Pipelines task supports start and stop a virtual machine plus create, restore and delete Hyper-V snapshots. 
 
 # Getting Started

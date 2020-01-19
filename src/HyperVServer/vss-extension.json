@@ -8,7 +8,7 @@
   "targets": [{
     "id": "Microsoft.VisualStudio.Services"
   }],
-  "description": "Remote control Hyper-V VMs and perform actions like start and stop VM, create or restore a snapshot",
+  "description": "Remote control Hyper-V VMs and perform actions like start and stop VM, create or restore a snapshot (without SCVMM)",
   "repository": {
     "type": "git",
     "uri": "https://github.com/AITGmbH/AIT.BuildSuite.HyperV"
@@ -22,13 +22,21 @@
     }
   },
   "links": {
+    "getstarted": {
+      "uri": "https://github.com/AITGmbH/AIT.BuildSuite.HyperV/wiki"
+    },
     "support": {
-      "uri": "https://www.aitgmbh.de/kontakt-und-anfahrt/"
+      "uri": "https://github.com/AITGmbH/AIT.BuildSuite.HyperV/issues"
     },
     "privacypolicy": {
       "uri": "https://www.aitgmbh.de/datenschutz"
     },
-    "screenshots": [{
+    "license": {
+      "uri": "https://github.com/AITGmbH/AIT.BuildSuite.HyperV/blob/master/LICENSE"
+    }
+  },
+  "screenshots": [
+      {
         "path": "HyperVServerConfiguration.png"
       },
       {
@@ -37,13 +45,21 @@
       {
         "path": "HyperVServerResult.png"
       }
-    ]
-  },
+    ],
   "categories": [
     "__ExtensionCategory__"
   ],
   "tags": [
-    "Deploy task, HyperV, Release Management, VM, Virtual Machine, SCVMM, Windows Server, AIT BuildSuite"
+    "Deploy task", 
+    "HyperV",
+    "Hyper-V", 
+    "Release Management", 
+    "VM", 
+    "Virtual Machine", 
+    "SCVMM",
+    "System Center Virtual Machine Manager",
+    "Windows Server", 
+    "AIT BuildSuite"
   ],
   "icons": {
     "default": "extension-icon.png"
