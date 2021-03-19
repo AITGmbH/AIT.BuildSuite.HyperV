@@ -73,9 +73,9 @@ jobs:
       #      Severity: 'Error,Warning'
 
     - task: UseNode@1
-      displayName: 'Use Node 12.x'
+      displayName: 'Use Node 10.x'
       inputs:
-        version: 12.x
+        version: 10.x
 
     - task: ms-devlabs.vsts-developer-tools-build-tasks.tfx-installer-build-task.TfxInstaller@3
       displayName: 'Use Node CLI for Azure DevOps (tfx-cli): 0.8.3'
