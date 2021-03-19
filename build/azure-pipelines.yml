@@ -69,7 +69,9 @@ jobs:
       #      Severity: 'Error,Warning'
 
     - task: ms-devlabs.vsts-developer-tools-build-tasks.tfx-installer-build-task.TfxInstaller@3
-      displayName: 'Use Node CLI for Azure DevOps (tfx-cli): v0.7.x'
+      displayName: 'Use Node CLI for Azure DevOps (tfx-cli): 0.8.3'
+      inputs:
+        version: 0.8.3
 
     - task: ms-devlabs.vsts-developer-tools-build-tasks.package-extension-build-task.PackageAzureDevOpsExtension@3
       displayName: 'Package Extension: AIT BuildSuite HyperV for Azure DevOps / Visual Studio Marketplace based deployment'
