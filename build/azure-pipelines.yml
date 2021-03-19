@@ -68,7 +68,10 @@ jobs:
       #      ExcludeRules: 'PSAvoidUsingWriteHost'
       #      Severity: 'Error,Warning'
 
-    - task: ms-devlabs.vsts-developer-tools-build-tasks.package-extension-build-task.PackageVSTSExtension@1
+    - task: ms-devlabs.vsts-developer-tools-build-tasks.tfx-installer-build-task.TfxInstaller@3
+      displayName: 'Use Node CLI for Azure DevOps (tfx-cli): v0.7.x'
+
+    - task: ms-devlabs.vsts-developer-tools-build-tasks.package-extension-build-task.PackageAzureDevOpsExtension@3
       displayName: 'Package Extension: AIT BuildSuite HyperV for Azure DevOps / Visual Studio Marketplace based deployment'
       inputs:
         rootFolder: src/HyperVServer
@@ -82,8 +85,8 @@ jobs:
         extensionPricing: free
         bypassLocalValidation: true
 
-    - task: PublishBuildArtifacts@1
-      displayName: 'Publish Artifact: Extension'
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Pipeline Artifact : Extension'
       inputs:
-          ArtifactName: Extension
+        artifact: Extension
         
