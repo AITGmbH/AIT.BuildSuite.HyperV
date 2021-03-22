@@ -77,10 +77,6 @@ jobs:
       inputs:
         version: 10.x
 
-    - script: |
-        npm run initdev
-      displayName: 'Install Node dependencies'
-
     - task: ms-devlabs.vsts-developer-tools-build-tasks.tfx-installer-build-task.TfxInstaller@3
       displayName: 'Use Node CLI for Azure DevOps (tfx-cli): 0.8.x'
       inputs:
