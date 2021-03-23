@@ -103,4 +103,5 @@ jobs:
       displayName: 'Publish Pipeline Artifact : Extension'
       inputs:
         artifact: Extension-$(DropSuffix)
+        targetPath: '$(build.artifactstagingdirectory)'
         
