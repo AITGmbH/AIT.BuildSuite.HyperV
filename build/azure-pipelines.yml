@@ -27,21 +27,25 @@ jobs:
         ExtensionID: 'aithyperv-preview'
         ExtensionCategory: 'Azure Pipelines'
         VsixFileSuffix: 'azurepipelines_preview'
+        DropSuffix: 'Preview'
       Public_AzureDevOps:
         ExtensionName: 'Hyper-V'
         ExtensionID: 'aithyperv'
         ExtensionCategory: 'Azure Pipelines'
         VsixFileSuffix: 'azurepipelines'
+        DropSuffix: ''
       Preview_LegacyTFS:
         ExtensionName: 'Hyper-V (Legacy-Preview)'
         ExtensionID: 'aithyperv-legacy-preview'
         ExtensionCategory: 'Build and release'
         VsixFileSuffix: '_build_and_release_preview'
+        DropSuffix: 'LegacyPreview'
       Public_LegacyTFS:
         ExtensionName: 'Hyper-V (Legacy)'
         ExtensionID: 'aithyperv-legacy'
         ExtensionCategory: 'Build and release'
         VsixFileSuffix: '_build_and_release'
+        DropSuffix: 'Legacy'
     
   steps:
     - task: colinsalmcorner.colinsalmcorner-buildtasks.replace-tokens-task.ReplaceTokens@1
@@ -98,5 +102,5 @@ jobs:
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Pipeline Artifact : Extension'
       inputs:
-        artifact: Extension
+        artifact: Extension-$(DropSuffix)
         
