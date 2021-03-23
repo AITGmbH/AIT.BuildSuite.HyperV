@@ -33,7 +33,7 @@ jobs:
         ExtensionID: 'aithyperv'
         ExtensionCategory: 'Azure Pipelines'
         VsixFileSuffix: 'azurepipelines'
-        DropSuffix: ''
+        DropSuffix: 'AzD'
       Preview_LegacyTFS:
         ExtensionName: 'Hyper-V (Legacy-Preview)'
         ExtensionID: 'aithyperv-legacy-preview'
