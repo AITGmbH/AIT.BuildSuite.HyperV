@@ -94,7 +94,6 @@ jobs:
         extensionName: '$(ExtensionName)'
         updateTasksVersion: true
         extensionVisibility: private
-        bypassLocalValidation: true
 
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Pipeline Artifact : Extension'
