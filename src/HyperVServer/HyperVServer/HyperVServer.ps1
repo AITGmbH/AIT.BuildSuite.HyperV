@@ -79,7 +79,7 @@ function Set-HyperVCmdletCacheDisabled
             $ConfirmPreference = 'None'
 
 			write-host "Disable Hyper-V cmdlet caching."
-			if ($hyperVPsModuleVersion -eq "1.0")
+			if ($hyperVPsModuleVersion -eq "1.0" -or $hyperVPsModuleVersion -eq "1.1")
 			{
 				Disable-VMEventing -force
 			} 
@@ -132,7 +132,7 @@ function Set-HyperVCmdletCacheEnabled
             $ConfirmPreference = 'None'
 
 			write-host "(Re-)Enable Hyper-V cmdlet caching."
-			if ($hyperVPsModuleVersion -eq "1.0")
+			if ($hyperVPsModuleVersion -eq "1.0" -or $hyperVPsModuleVersion -eq "1.1")
 			{
 				Enable-VMEventing -force
 			}
