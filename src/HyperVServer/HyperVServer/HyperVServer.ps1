@@ -1127,8 +1127,16 @@ Try
 
 	if (![string]::IsNullOrEmpty($hyperVPsModuleVersion))
 	{
+		# in case something it not working as expected we want to know which modules are available
+		$availableModules = Get-Module hyper-v -ListAvailable
+		Write-Debug ($availableModules | Format-Table | Out-String)
+
 		Write-Host "Loading Hyper-V PowerShell module version $hyperVPsModuleVersion";
-		Import-Module –Name Hyper-V -Version $hyperVPsModuleVersion;
+		Import-Module –Name Hyper-V -RequiredVersion $hyperVPsModuleVersion -Force -Global;
+
+		# in case something it not working as expected we want to know which modules are loaded
+		$checkLoadedModules = Get-Module hyper-v
+		Write-Debug ($checkLoadedModules | Format-Table | Out-String)
 	}
 	else {
 		Write-Host "Loading Hyper-V system default PowerShell module"
