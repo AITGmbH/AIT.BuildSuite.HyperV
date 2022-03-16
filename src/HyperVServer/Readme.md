@@ -23,7 +23,8 @@ and [Hyper-V Module](https://technet.microsoft.com/itpro/powershell/windows/hype
 * Changes since 6.0.8: Added information about data protection
 * Changes since 6.1.0: Adapted Azure DevOps rebranding in certain files/places, opensourced version on GitHub
 * Changes since 7.0.0: Moved from Powershell to Powershell3 execution handler, added direct turn off of VMs, renamed action StopVM to ShutdownVM, fixed bug in vmeventing (missing parameter), refactored code based on PSScriptAnalyzer
-* Changes since 7.0.36: Removed non-existent parameter for hyperv cmdlet version 1.0 (only affects old hyper-v versions)
+* Changes since 7.0.36: Removed non-existent parameter for hyperv cmdlet version 1.0 (only affects old hyper-v versions -> pre Win 2016)
+* Changes since 7.0.62: Added additional support for older hyperv cmdlet version 1.1 (only affects old hyper-v versions -> pre Win 2016)
 * Changes since 7.0.66: Fixed loading of older cmdlet versions, added some additional debug outputs (could be enabled with system.debug = true)
 
 ### Known limitions
