@@ -1,6 +1,6 @@
-**Note ! This project wil go into an archived status and will no longer be maintained !**
+**Note ! This project will go into an archived status and will no longer be maintained !**
 
-**Nico Orschel will maintain a forked version that will also be publsihed in the Azure DevOps Marketplace**
+**Nico Orschel will maintain a forked version that will also be published in the Azure DevOps Marketplace**
 
 **The fork can be found [here](https://github.com/norschel/AzurePipeline.HyperV).**
 
