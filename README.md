@@ -1,3 +1,10 @@
+**Note ! This project will go into an archived status and will no longer be maintained !**
+
+**Nico Orschel will maintain a forked version that will also be published in the Azure DevOps Marketplace**
+
+**The fork can be found [here](https://github.com/norschel/AzurePipeline.HyperV).**
+
+
 # Introduction 
 Remote control one or many virtual machine(s) on a (remote) Hyper-V Server (without SCVMM). 
 The Azure Pipelines task supports start and stop a virtual machine plus create, restore and delete Hyper-V snapshots. 

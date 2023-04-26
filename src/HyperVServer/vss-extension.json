@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "name": "Hyper-V",
   "publisher": "AITGmbh",
-  "public": "false",
+  "public": false,
   "targets": [{
     "id": "Microsoft.VisualStudio.Services"
   }],

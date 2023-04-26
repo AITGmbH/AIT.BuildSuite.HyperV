@@ -4,6 +4,10 @@ resources:
 - repo: self
   clean: true
 
+pool:
+  vmImage: 'windows-latest'
+  demands: npm
+
 trigger:
 - master
 
@@ -23,21 +27,25 @@ jobs:
         ExtensionID: 'aithyperv-preview'
         ExtensionCategory: 'Azure Pipelines'
         VsixFileSuffix: 'azurepipelines_preview'
+        DropSuffix: 'Preview'
       Public_AzureDevOps:
         ExtensionName: 'Hyper-V'
         ExtensionID: 'aithyperv'
         ExtensionCategory: 'Azure Pipelines'
         VsixFileSuffix: 'azurepipelines'
+        DropSuffix: 'AzD'
       Preview_LegacyTFS:
         ExtensionName: 'Hyper-V (Legacy-Preview)'
         ExtensionID: 'aithyperv-legacy-preview'
         ExtensionCategory: 'Build and release'
         VsixFileSuffix: '_build_and_release_preview'
+        DropSuffix: 'LegacyPreview'
       Public_LegacyTFS:
         ExtensionName: 'Hyper-V (Legacy)'
         ExtensionID: 'aithyperv-legacy'
         ExtensionCategory: 'Build and release'
         VsixFileSuffix: '_build_and_release'
+        DropSuffix: 'Legacy'
     
   steps:
     - task: colinsalmcorner.colinsalmcorner-buildtasks.replace-tokens-task.ReplaceTokens@1
@@ -68,7 +76,18 @@ jobs:
       #      ExcludeRules: 'PSAvoidUsingWriteHost'
       #      Severity: 'Error,Warning'
 
-    - task: ms-devlabs.vsts-developer-tools-build-tasks.package-extension-build-task.PackageVSTSExtension@1
+    - task: UseNode@1
+      displayName: 'Use Node 10.x'
+      inputs:
+        version: 10.x
+
+    - task: ms-devlabs.vsts-developer-tools-build-tasks.tfx-installer-build-task.TfxInstaller@3
+      displayName: 'Use Node CLI for Azure DevOps (tfx-cli): 0.8.x'
+      inputs:
+        version: 0.8.x
+        checkLatest: true
+
+    - task: ms-devlabs.vsts-developer-tools-build-tasks.package-extension-build-task.PackageAzureDevOpsExtension@3
       displayName: 'Package Extension: AIT BuildSuite HyperV for Azure DevOps / Visual Studio Marketplace based deployment'
       inputs:
         rootFolder: src/HyperVServer
@@ -79,11 +98,10 @@ jobs:
         extensionName: '$(ExtensionName)'
         updateTasksVersion: true
         extensionVisibility: private
-        extensionPricing: free
-        bypassLocalValidation: true
 
-    - task: PublishBuildArtifacts@1
-      displayName: 'Publish Artifact: Extension'
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Pipeline Artifact : Extension'
       inputs:
-          ArtifactName: Extension
+        artifact: Extension-$(DropSuffix)
+        targetPath: '$(build.artifactstagingdirectory)'
         
